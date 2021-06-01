@@ -1,18 +1,20 @@
 package br.com.mercadolivre.desafiospring.domain;
 
-import br.com.mercadolivre.desafiospring.dto.UserDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
-@Entity
+@Getter
+@Setter
 @NoArgsConstructor
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
 public class User implements Serializable {
 
     @Id
@@ -22,18 +24,22 @@ public class User implements Serializable {
     private String email;
     private Integer age;
 
-    @JsonIgnore
     @ManyToMany
-    @JoinTable(
-            name = "USER_SALESMAN",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "salesman_id"))
-    private List<Salesman> followedSalesman = new ArrayList<>();
+    @JoinTable(name="user_follows",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns={@JoinColumn(name="followed_id")})
+    private Set<User> followed = new HashSet<User>();
 
-    public User(UserDTO userDTO){
-        this.id = null;
-        this.name = userDTO.getName();
-        this.email = userDTO.getEmail();
-        this.age = userDTO.getAge();
+    @ManyToMany(mappedBy = "followed")
+    private Set<User> followers = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Post> posts = new HashSet<>();
+
+    public User(Integer id, String name, String email, Integer age) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
     }
 }

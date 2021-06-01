@@ -1,11 +1,16 @@
 package br.com.mercadolivre.desafiospring.dto;
 
+import br.com.mercadolivre.desafiospring.domain.User;
 import lombok.Data;
 
 @Data
 public class UserDTO {
 
+    private Integer userId;
     private String name;
-    private String email;
-    private Integer age;
+
+    public UserDTO(User user){
+        this.userId = user.getId();
+        this.name = user.getName();
+    }
 }
