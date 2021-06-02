@@ -21,6 +21,7 @@ public class Product {
     private String color;
     private String notes;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "detail")
     private Post post;
 

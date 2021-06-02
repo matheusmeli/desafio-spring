@@ -2,11 +2,11 @@ package br.com.mercadolivre.desafiospring.dto;
 
 import br.com.mercadolivre.desafiospring.domain.User;
 
-public class UserFollowersCountDTO extends UserDTO{
+public class SalesmanFollowersCountDTO extends UserDTO{
 
     private Integer followersCount;
 
-    public UserFollowersCountDTO(User user) {
+    public SalesmanFollowersCountDTO(User user) {
         super(user);
     }
 

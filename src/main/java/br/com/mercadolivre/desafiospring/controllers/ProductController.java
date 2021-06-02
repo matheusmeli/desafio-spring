@@ -1,12 +1,10 @@
 package br.com.mercadolivre.desafiospring.controllers;
 
-import br.com.mercadolivre.desafiospring.domain.Post;
+import br.com.mercadolivre.desafiospring.dto.FeedPostsDTO;
 import br.com.mercadolivre.desafiospring.dto.PostDTO;
 import br.com.mercadolivre.desafiospring.services.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -25,8 +23,10 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/followed/{userID}/list", method = RequestMethod.GET)
-    public ResponseEntity<List<Post>> followedUsersPost(@PathVariable Integer userID){
-        List<Post> followedUsersPost = postService.getFollowedUsersPost(userID);
+    public ResponseEntity<FeedPostsDTO> followedUsersPost(
+            @PathVariable Integer userID,
+            @RequestParam(value = "order", defaultValue = "date_asc") String orderBy){
+        FeedPostsDTO followedUsersPost = postService.getFollowedUsersPost(userID, orderBy);
         return ResponseEntity.ok().body(followedUsersPost);
     }
 }

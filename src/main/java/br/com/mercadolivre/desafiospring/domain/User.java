@@ -13,12 +13,12 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name = "user_type")
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Integer id;
     private String name;
     private String email;
@@ -28,13 +28,7 @@ public class User implements Serializable {
     @JoinTable(name="user_follows",
             joinColumns={@JoinColumn(name="user_id")},
             inverseJoinColumns={@JoinColumn(name="followed_id")})
-    private Set<User> followed = new HashSet<User>();
-
-    @ManyToMany(mappedBy = "followed")
-    private Set<User> followers = new HashSet<>();
-
-    @OneToMany(mappedBy = "user")
-    private Set<Post> posts = new HashSet<>();
+    private Set<Salesman> followed = new HashSet<>();
 
     public User(Integer id, String name, String email, Integer age) {
         this.id = id;
