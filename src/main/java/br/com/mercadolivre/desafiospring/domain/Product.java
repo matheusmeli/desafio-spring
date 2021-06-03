@@ -2,7 +2,9 @@ package br.com.mercadolivre.desafiospring.domain;
 
 import br.com.mercadolivre.desafiospring.dto.ProductDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 

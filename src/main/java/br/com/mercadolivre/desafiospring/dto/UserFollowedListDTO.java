@@ -4,7 +4,6 @@ import br.com.mercadolivre.desafiospring.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class UserFollowedListDTO extends UserDTO{
 

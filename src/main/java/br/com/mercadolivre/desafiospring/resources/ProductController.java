@@ -1,7 +1,9 @@
-package br.com.mercadolivre.desafiospring.controllers;
+package br.com.mercadolivre.desafiospring.resources;
 
 import br.com.mercadolivre.desafiospring.dto.FeedPostsDTO;
 import br.com.mercadolivre.desafiospring.dto.PostDTO;
+import br.com.mercadolivre.desafiospring.resources.exceptions.UserNotASalesmanException;
+import br.com.mercadolivre.desafiospring.resources.exceptions.UserNotFoundException;
 import br.com.mercadolivre.desafiospring.services.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/newpost", method = RequestMethod.POST)
-    public ResponseEntity<Void> newpost(@RequestBody PostDTO postDTO){
+    public ResponseEntity<Void> newpost(@RequestBody PostDTO postDTO) throws UserNotASalesmanException, UserNotFoundException {
         postService.insert(postDTO);
         return ResponseEntity.ok().build();
     }
@@ -25,7 +27,7 @@ public class ProductController {
     @RequestMapping(value = "/followed/{userID}/list", method = RequestMethod.GET)
     public ResponseEntity<FeedPostsDTO> followedUsersPost(
             @PathVariable Integer userID,
-            @RequestParam(value = "order", defaultValue = "date_asc") String orderBy){
+            @RequestParam(value = "order", defaultValue = "date_asc") String orderBy) throws UserNotFoundException {
         FeedPostsDTO followedUsersPost = postService.getFollowedUsersPost(userID, orderBy);
         return ResponseEntity.ok().body(followedUsersPost);
     }

@@ -8,14 +8,13 @@ import br.com.mercadolivre.desafiospring.dto.UserDTO;
 import br.com.mercadolivre.desafiospring.dto.UserFollowedListDTO;
 import br.com.mercadolivre.desafiospring.repositories.SalesmanRepository;
 import br.com.mercadolivre.desafiospring.repositories.UserRepository;
+import br.com.mercadolivre.desafiospring.resources.exceptions.UserNotASalesmanException;
+import br.com.mercadolivre.desafiospring.resources.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 
@@ -30,14 +29,28 @@ public class UserService {
         this.salesmanRepository = salesmanRepository;
     }
 
+    public User getUser(Integer userId) throws UserNotFoundException{
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
+    public Salesman getSalesman(Integer userID) throws UserNotFoundException, UserNotASalesmanException {
+        User user = getUser(userID);
+        Salesman salesman = null;
+        try {
+            salesman = salesmanRepository.findById(userID).get();
+        }catch (NoSuchElementException e){
+            throw new UserNotASalesmanException(userID);
+        }
+        return salesman;
+    }
+
     public User insert(User user){
         return userRepository.save(user);
     }
 
-    public User follow(Integer userId, Integer salesmanIDToFollow) {
-        User user = userRepository.findById(userId).get();
-//        User user = userRepository.getById(userId);
-        Salesman salesmanToFollow = salesmanRepository.findById(salesmanIDToFollow).get();
+    public User follow(Integer userId, Integer salesmanIDToFollow) throws UserNotFoundException, UserNotASalesmanException {
+        User user = getUser(userId);
+        Salesman salesmanToFollow = getSalesman(salesmanIDToFollow);
 
         user.getFollowed().add(salesmanToFollow);
 
@@ -47,9 +60,9 @@ public class UserService {
         return user;
     }
 
-    public User unfollow(Integer userID, Integer salesmanIDToUnfollow) {
-        User user = userRepository.findById(userID).get();
-        Salesman salesmanToUnfollow = salesmanRepository.findById(salesmanIDToUnfollow).get();
+    public User unfollow(Integer userID, Integer salesmanIDToUnfollow) throws UserNotFoundException, UserNotASalesmanException {
+        User user = getUser(userID);
+        Salesman salesmanToUnfollow = getSalesman(salesmanIDToUnfollow);
 
         user.getFollowed().remove(salesmanToUnfollow);
 
@@ -59,8 +72,8 @@ public class UserService {
         return user;
     }
 
-    public SalesmanFollowersListDTO getFollowersList(Integer userID, String orderBy) {
-        Salesman salesman = salesmanRepository.findById(userID).get();
+    public SalesmanFollowersListDTO getFollowersList(Integer userID, String orderBy) throws UserNotFoundException, UserNotASalesmanException {
+        Salesman salesman = getSalesman(userID);
         List<UserDTO> followers = null;
 
         SalesmanFollowersListDTO salesmanFollowersListDTO = new SalesmanFollowersListDTO(salesman);
@@ -75,8 +88,8 @@ public class UserService {
         return salesmanFollowersListDTO;
     }
 
-    public UserFollowedListDTO getFollowedList(Integer userID, String orderBy) {
-        User user = userRepository.findById(userID).get();
+    public UserFollowedListDTO getFollowedList(Integer userID, String orderBy) throws UserNotFoundException{
+        User user = getUser(userID);
         List<UserDTO> followed = null;
 
         UserFollowedListDTO userFollowedListDTO = new UserFollowedListDTO(user);
@@ -92,8 +105,8 @@ public class UserService {
         return userFollowedListDTO;
     }
 
-    public SalesmanFollowersCountDTO getFollowersCount(Integer userID) {
-        Salesman salesman = salesmanRepository.findById(userID).get();
+    public SalesmanFollowersCountDTO getFollowersCount(Integer userID) throws UserNotFoundException, UserNotASalesmanException{
+        Salesman salesman = getSalesman(userID);
         SalesmanFollowersCountDTO salesmanFollowersCountDTO = new SalesmanFollowersCountDTO(salesman);
         salesmanFollowersCountDTO.setFollowersCount(salesman.getFollowers().size());
 
