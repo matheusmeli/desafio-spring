@@ -10,4 +10,10 @@ class DesafioSpringApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	public void userFollowSalesman(){
+
+
+	}
+
 }
